@@ -1,0 +1,41 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+button {
+  border: 0;
+  cursor: pointer;
+}
+input {
+  border: 0;
+}
+.te-cer {
+  text-align: center;
+}
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+}
+.spb {
+  justify-content: space-between;
+}
+.spa {
+  justify-content: space-around;
+}
+.fixed {
+  position: fixed;
+}
+img {
+  vertical-align: middle;
+}
+//文本超出变为省略号
+.overhid {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html,
+body,
+#app {
+  height: 100%;
+}
