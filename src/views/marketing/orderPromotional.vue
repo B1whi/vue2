@@ -74,7 +74,7 @@
           type="default"
           style="margin-left: 20px"
           icon="ios-trash"
-          @click="instance('warning')"
+          @click="Delete"
           >删除</Button
         >
       </div>
@@ -92,8 +92,6 @@
         :columns="columns12"
         :data="data"
         @on-selection-change="selectChange"
-        @on-select="select"
-        @on-select-all="selectAll"
       >
         <template slot-scope="{ row }" slot="status">
           <div v-if="row.status === '01'"><Tag color="red">禁用</Tag></div>
@@ -105,10 +103,10 @@
             size="small"
             style="margin-right: 5px"
             @click="show(row, index)"
-            >View</Button
+            >编辑</Button
           >
           <Button type="error" size="small" @click="remove(row, index)"
-            >Delete</Button
+            >删除</Button
           >
         </template>
       </Table>
@@ -183,6 +181,33 @@
         </FormItem>
       </Form>
     </Modal>
+
+    <!-- 点击删除弹出的modal框 -->
+    <Modal v-model="modal2" width="360">
+      <p slot="header" style="color: #f60; text-align: center">
+        <Icon type="ios-information-circle"></Icon>
+        <span>你确定要删除已选择的选项吗？</span>
+      </p>
+      <div style="text-align: center">
+        <p>点击删除后数据将不会再恢复，请慎重。</p>
+        <p>确定删除请点击下方的删除按钮</p>
+      </div>
+      <div slot="footer">
+        <Button
+          type="error"
+          size="large"
+          long
+          :loading="modal_loading"
+          @click="del"
+          >删除</Button
+        >
+      </div>
+    </Modal>
+
+    <!-- 点击表格内部的编辑按钮 -->
+    <Modal v-model="modal6" title="编辑促销" :loading="loading1" @on-ok="asyncOK">
+      
+    </Modal>
   </div>
 </template>
 
@@ -195,6 +220,8 @@ export default {
   props: {},
   data() {
     return {
+      modal_loading: false,
+      modal2: false,
       formValidate1: {
         name: "",
         number: "",
@@ -332,6 +359,9 @@ export default {
       },
       data: [],
       total: "",
+      arr: [],
+      modal6: false,
+      loading1: true,
     };
   },
   components: {},
@@ -353,6 +383,12 @@ export default {
     // 点击表格内部的编辑按钮 =============================================================
     show(row, index) {
       console.log(row, index);
+      this.modal6 = true;
+    },
+    asyncOK() {
+      setTimeout(() => {
+        this.modal6 = false;
+      }, 2000);
     },
     // 点击表格内部删除按钮 =============================================================
     remove(row, index) {
@@ -379,17 +415,10 @@ export default {
           console.log(err);
         });
     },
-    // 表格中的单选框 =============================================================
-    select(row) {
-      console.log(row);
-    },
-    // 表格中的全选框 =============================================================
-    selectAll(selection) {
-      console.log(selection);
-    },
     //表格选项发生变化 =============================================================
     selectChange(selection) {
-      console.log(selection);
+      this.arr = selection;
+      console.log(this.arr);
     },
 
     //新增促销modal框中的确认按钮=======================================================
@@ -428,35 +457,34 @@ export default {
     },
 
     // 点击屏幕上的删除按钮 =============================================================
-    instance(type) {
-      const title = "Title";
-      const content = "<p>Content of dialog</p><p>Content of dialog</p>";
-      switch (type) {
-        case "info":
-          this.$Modal.info({
-            title: title,
-            content: content,
-          });
-          break;
-        case "success":
-          this.$Modal.success({
-            title: title,
-            content: content,
-          });
-          break;
-        case "warning":
-          this.$Modal.warning({
-            title: title,
-            content: content,
-          });
-          break;
-        case "error":
-          this.$Modal.error({
-            title: title,
-            content: content,
-          });
-          break;
+    Delete() {
+      if (this.arr.length === 0) {
+        this.$Message.info("您还未选择要删除的选项，请选择");
+      } else {
+        this.modal2 = true;
       }
+    },
+
+    del() {
+      this.modal_loading = true;
+
+      this.arr.map((item) => {
+        api
+          .deleteOrder({ _id: item._id })
+          .then((res) => {
+            if (res.code === 200) {
+              this.modal_loading = false;
+              this.modal2 = false;
+              this.$Message.success(res.msg);
+              this.getData();
+            } else {
+              this.$Message.error(res.msg);
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      });
     },
   },
   mounted() {

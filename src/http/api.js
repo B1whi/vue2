@@ -37,5 +37,25 @@ export default {
             startDate,
             status
         })
+    },
+    //点击删除按钮删除订单促销表格数据
+    deleteOrder(_id) {
+        return http.post("/market/delOrder", { _id })
+    },
+    // 获取营销中优惠券表格数据 =============================================================
+    coupons() {
+        return http.get('/market/getCoupons')
+    },
+    // 营销中优惠券页面中新增优惠券按钮================================================================
+    addCoupons({ name, category, issueNumber, discountAmount, threshold, status, effective }) {
+        return http.post('/market/coupons', {
+            name,
+            category,
+            issueNumber,
+            discountAmount,
+            threshold,
+            status,
+            effective
+        })
     }
 }

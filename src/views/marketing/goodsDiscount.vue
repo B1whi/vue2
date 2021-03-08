@@ -204,6 +204,11 @@
         >
       </div>
     </Modal>
+
+    <!-- 点击表格内部的编辑按钮 -->
+    <Modal v-model="modal6" title="Title" :loading="loading" @on-ok="asyncOK">
+      <p>After you click ok, the dialog box will close in 2 seconds.</p>
+    </Modal>
   </div>
 </template>
   </div>
@@ -347,6 +352,8 @@ export default {
       total: "",
       loading: true,
       arr: [],
+      modal6: false,
+      loading1: true,
     };
   },
   components: {},
@@ -415,7 +422,14 @@ export default {
     },
     // 表格修改按钮 =============================================================
     show(row) {
-      console.log(row);
+      console.log(row,1111);
+      this.modal6 = true;
+    },
+
+    asyncOK() {
+      setTimeout(() => {
+        this.modal6 = false;
+      }, 2000);
     },
     // 表格删除按钮=============================================================
     remove(row) {
