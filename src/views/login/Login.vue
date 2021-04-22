@@ -20,7 +20,7 @@
       </FormItem>
       <FormItem>
         <Button class="btn" type="primary" @click="handleSubmit('formInline')"
-          >登111录</Button
+          >登录</Button
         >
       </FormItem>
     </Form>
